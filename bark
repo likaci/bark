@@ -1,0 +1,13 @@
+#!/bin/bash
+#set -x
+
+BARK_TOKEN="xxxxxxxxxxxxxxxxxxxxxx"
+CURL_ARGS="--silent --location"
+
+title=${1:-$(hostname)}
+msg=${2:-$(basename "$(pwd)")}
+
+curl -X POST "https://api.day.app/$BARK_TOKEN" \
+  --data-urlencode "title=$title" \
+  --data-urlencode "body=$msg" \
+  $CURL_ARGS >>/dev/null 2>&1 &
