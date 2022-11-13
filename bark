@@ -1,20 +1,32 @@
 #!/bin/bash
-#set -x
-
+set -x
+#telegram token
+TG_TOKEN="1111111111:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+TG_CHAT_ID="1111111111"
+TG_API="https://api.telegram.org/bot"
 #bark token
 BARK_TOKEN="xxxxxxxxxxxxxxxxxxxxxx"
 #wechat/wecom id and token
 WECOM_ID="xxxxxxxxxxxxxxxxxx"
 WECOM_SECRET="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 WECOM_AGENT_ID="1111111"
-WECOM_TO_USER="uuuuuu"
+WECOM_TO_USER="xxxxxx"
 
 CURL_ARGS="--silent --location"
 
 #set default title and msg
 title=${1:-$(hostname)}
 msg=${2:-$(basename "$(pwd)")}
-channel=${3:-b}
+channel=${3:-t}
+
+#telegram
+if [[ $channel == *"t"* ]]; then
+  curl -X POST "$TG_API$TG_TOKEN/sendMessage" \
+    -d "text=<b>$title</b>%0A$msg" \
+    -d "chat_id=$TG_CHAT_ID" \
+    -d "parse_mode=HTML" \
+    $CURL_ARGS >>/dev/null 2>&1 &
+fi
 
 #bark
 if [[ $channel == *"b"* ]]; then
