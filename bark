@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 #telegram token
 TG_TOKEN="1111111111:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 TG_CHAT_ID="1111111111"
