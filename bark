@@ -1,5 +1,17 @@
 #!/bin/bash
 #set -x
+#usage bark title msg channel(b|t|w|f)
+#defualt title is hostname; default msg is current dir; default channel is telegram
+#                     b for bark
+#                     t for telegram (default)
+#                     w for wechat/wecom
+#                     f for feishu/lark
+
+#set default title msg and channel
+title=${1:-$(hostname)}
+msg=${2:-$(basename "$(pwd)")}
+channel=${3:-t}
+
 #telegram token
 TG_TOKEN="1111111111:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 TG_CHAT_ID="1111111111"
@@ -11,13 +23,10 @@ WECOM_ID="xxxxxxxxxxxxxxxxxx"
 WECOM_SECRET="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 WECOM_AGENT_ID="1111111"
 WECOM_TO_USER="xxxxxx"
+#feishu/lark webhook
+FEISHU_WEB_HOOK_TOKEN="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 CURL_ARGS="--silent --location"
-
-#set default title and msg
-title=${1:-$(hostname)}
-msg=${2:-$(basename "$(pwd)")}
-channel=${3:-t}
 
 #telegram
 if [[ $channel == *"t"* ]]; then
@@ -43,4 +52,12 @@ if [[ $channel == *"w"* ]]; then
   m=${msg//\"/\\\"/}
   curl -X "POST" "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=$tmp_token" -H "Content-Type: text/plain; charset=utf-8" \
     -d "{ \"touser\": \"${WECOM_TO_USER}\", \"msgtype\": \"text\", \"agentid\": \"${WECOM_AGENT_ID}\", \"text\": { \"content\": \"${t}\n${m}\" } }" $CURL_ARGS >>/dev/null 2>&1 &
+fi
+
+#feishu/lark
+if [[ $channel == *"f"* ]]; then
+  t=${title//\"/\\\"/}
+  m=${msg//\"/\\\"/}
+  notify_url="https://open.feishu.cn/open-apis/bot/v2/hook/$FEISHU_WEB_HOOK_TOKEN"
+  curl -X "POST" "$notify_url" -H "Content-Type: application/json" -d '{ "msg_type": "post", "content": { "post": { "zh_cn": { "title": "'"$t"'", "content": [[{ "tag": "text", "text": "'"$m"'" }]] } } } }' $CURL_ARGS >>/dev/null 2>&1 &
 fi
