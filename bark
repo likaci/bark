@@ -1,11 +1,13 @@
 #!/bin/bash
 #set -x
-#usage bark title msg channel(b|t|w|f)
+#usage bark title msg channel(b|t|w|f|d)
 #defualt title is hostname; default msg is current dir; default channel is telegram
 #                     b for bark
 #                     t for telegram (default)
 #                     w for wechat/wecom
 #                     f for feishu/lark
+#                     d for discord
+#eg `bark hello test btwfd` will send "hello\ntest" to all channel
 
 #set default title msg and channel
 title=${1:-$(hostname)}
@@ -25,6 +27,8 @@ WECOM_AGENT_ID="1111111"
 WECOM_TO_USER="xxxxxx"
 #feishu/lark webhook
 FEISHU_WEB_HOOK_TOKEN="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+#discord webhook
+DISCORD_WEBHOOK="https://discord.com/api/webhooks/xxxx"
 
 CURL_ARGS="--silent --location"
 
@@ -59,5 +63,12 @@ if [[ $channel == *"f"* ]]; then
   t=${title//\"/\\\"/}
   m=${msg//\"/\\\"/}
   notify_url="https://open.feishu.cn/open-apis/bot/v2/hook/$FEISHU_WEB_HOOK_TOKEN"
-  curl -X "POST" "$notify_url" -H "Content-Type: application/json" -d '{ "msg_type": "post", "content": { "post": { "zh_cn": { "title": "'"$t"'", "content": [[{ "tag": "text", "text": "'"$m"'" }]] } } } }' $CURL_ARGS >>/dev/null 2>&1 &
+  curl -X "POST" "$notify_url" -H "Content-Type: application/json" -d '{ "msg_type": "post", "content": { "post": { "zh_cn": { "title": "'"$t"'", "content": [[{ "tag": "text", "text": "'"$m"'" }]] } } } }' \
+  $CURL_ARGS >>/dev/null 2>&1 &
+fi
+
+#discord
+if [[ $channel == *"d"* ]]; then
+  curl -X "POST" $DISCORD_WEBHOOK -H "Content-Type: application/json" -d '{ "content": "'"$title\n$msg"'" }' \
+  $CURL_ARGS >>/dev/null 2>&1 &
 fi
