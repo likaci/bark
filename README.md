@@ -4,7 +4,8 @@
 
 
 ## Usage
-`bark title msg channel(b|t|w|f|d)`
+### bark
+`bark title msg channel(b|t|w|f|d)` send "title msg" to channel.   
 
 - `title` (optional): The title of the notification. The default title is hostname.
 - `msg` (optional): The content of the notification. The default content is current dir.
@@ -15,11 +16,18 @@
   - `f` for Feishu/Lark
   - `d` for Discord
 
+ ### barkrun
+`barkrun xxxx`
+run `xxx` command, save out to run.log, notify if command run failed.
+
 ## Example
+`bark`   
+Send Hostname dir to telegram (default channel)
+
 To send a notification with a custom title "hello" and message "test" to multiple channels, you can use the following command:   
 `bark hello test btwfd`
 
-To send a notification after a long time make:   
+To send a notification after a long long time make:   
 `make -j9; bark`
 
 ## Notification Channel Setup
