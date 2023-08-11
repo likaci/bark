@@ -1,0 +1,9 @@
+#!/bin/bash
+#set -x
+eval "$@" >>"${RUN_LOG:-run.log}" 2>&1
+exit_code=$?
+if [ "$exit_code" != 0 ]; then
+  title="⚠️$(hostname | tr '[:lower:]' '[:upper:]') $@ $(basename $PWD) Failed"
+  msg=$(tail -1 "${RUN_LOG:-run.log}")
+  bark "$title" "$msg"
+fi
